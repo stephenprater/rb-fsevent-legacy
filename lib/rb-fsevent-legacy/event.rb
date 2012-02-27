@@ -1,4 +1,4 @@
-module FSEvent
+class FSEvent
   class Event
     #an ACTUAL filesystem event
     attr_accessor :event_path, :event_flags, :event_id

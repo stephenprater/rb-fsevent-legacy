@@ -1,4 +1,4 @@
-module FSEvent
+class FSEvent
   class Stream
     class << self
       def running?
