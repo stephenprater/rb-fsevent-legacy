@@ -38,6 +38,12 @@ module FSEvent
       @streams.collect { |s| s.path }
     end
 
+    def add_paths paths
+      paths.each do |p|
+        self.add_path p
+      end
+    end
+
     def add_path path
       @streams.push(NativeStream.new(path,self.latency))
     end

@@ -6,7 +6,6 @@
 #include <stdlib.h>
 
 #define COMPILED_AT __DATE__ " " __TIME__
-#define DEBUG true
 
 static VALUE cFSEventSystemStream;
 
@@ -312,6 +311,10 @@ static void fs_free(cFSEventSystemStreamType *me){
  
   pthread_mutex_lock(&mutex);
     if(me->running == Qtrue){
+
+#ifdef DEBUG
+      printf("Discarding %d events.\n",me->numEvents); fflush(stdout);
+#endif
       // we only get called from ruby's GC - but it's possible
       // for this object to be GCd after the runloop itself has been
       // so check for that situation

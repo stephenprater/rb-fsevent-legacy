@@ -10,7 +10,6 @@ describe FSEvent do
   end
 
   it "can start and stop native FSEvent watchers" do
-    debugger
     fsevent = FSEvent::Stream.new(@fixture_path, 0.1)
     fsevent.running?.should be_true
     fsevent.streams.length.should == 1
@@ -57,7 +56,6 @@ describe FSEvent do
   end
 
   it "should work with path with an apostrophe" do
-    debugger
     fsevent = FSEvent::Stream.new(@fixture_path, 0.1)
     custom_path = @fixture_path.join("custom 'path")
     file = custom_path.join("newfile#{rand(10)}.rb").to_s
@@ -120,4 +118,31 @@ describe FSEvent do
     fsevent.killall
   end
 
+  it "will run in a separate thread" do
+    fsevent = nil
+    t = Thread.new do
+      fsevent = FSEvent::Stream.new(@fixture_path,0.1)
+      fsevent.run
+    end
+
+    
+    file1 = @fixture_path.join("folder1/file1.txt")
+    file2 = @fixture_path.join("folder1/folder2/file2.txt")
+
+    FileUtils.touch file1
+
+    sleep 0.2
+
+    fsevent.events.collect do |e|
+      e.event_path
+    end.should include(@fixture_path.join("folder1/").to_s)
+
+    FileUtils.touch file2
+    
+    sleep 0.2
+
+    fsevent.events.collect do |e|
+      e.event_path
+    end.should include(@fixture_path.join("folder1/folder2/").to_s)
+  end
 end
